@@ -1,0 +1,9 @@
+{
+	"name": "Open and close chrome-devtools automatically through websocket",
+	"version": "0.1",
+	"background": { "scripts": ["reconnecting-websocket.js", "background.js"] },
+	"permissions": [
+		"tabs"
+	],
+	"manifest_version": 2
+}

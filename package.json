@@ -1,0 +1,11 @@
+{
+	"name": "automatic-node-inspect-opener",
+	"version": "0.0.1",
+	"main": "ws.js",
+	"author": "Jiří Prokop <jprokop@synaptiko.cz>",
+	"license": "MIT",
+	"dependencies": {
+		"byline": "^5.0.0",
+		"ws": "^1.1.1"
+	}
+}
