@@ -5,6 +5,7 @@
 	"author": "Jiří Prokop <jprokop@synaptiko.cz>",
 	"license": "MIT",
 	"dependencies": {
+		"async": "^2.1.4",
 		"byline": "^5.0.0",
 		"ws": "^1.1.1"
 	}

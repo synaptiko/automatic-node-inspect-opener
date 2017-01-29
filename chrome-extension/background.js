@@ -1,20 +1,33 @@
 // uses: https://github.com/joewalnes/reconnecting-websocket
-var ws = new ReconnectingWebSocket('ws://localhost:8099', null, { automaticOpen: true, reconnectDecay: 1, reconnectInterval: 100 });
-var lastOpenedTab;
+const ws = new ReconnectingWebSocket('ws://localhost:8099', null, { automaticOpen: true, reconnectDecay: 1, reconnectInterval: 100 });
+const openedTabs = {};
 
 ws.addEventListener('message', function(event) {
-	if (/^chrome-devtools:\/\/devtools/.test(event.data)) {
-		chrome.tabs.create({ url: event.data }, (tab) => { lastOpenedTab = tab });
+	let message;
+
+	try {
+		message = JSON.parse(event.data);
 	}
-	else if (event.data === 'close' && lastOpenedTab) {
-		chrome.tabs.remove(lastOpenedTab.id);
-		lastOpenedTab = undefined;
+	catch (err) {
+		console.error('Error when parsing incoming data:', err);
+	}
+
+	if (message) {
+		if (message.action === 'open') {
+			chrome.tabs.create({ url: message.url }, (tab) => {
+				openedTabs[message.url] = tab;
+			});
+		}
+		else if (message.action === 'close' && openedTabs[message.url]) {
+			chrome.tabs.remove(openedTabs[message.url].id);
+			delete openedTabs[message.url];
+		}
 	}
 });
 
 ws.addEventListener('close', function () {
-	if (lastOpenedTab) {
-		chrome.tabs.remove(lastOpenedTab.id);
-		lastOpenedTab = undefined;
-	}
+	Object.keys(openedTabs).forEach(function(url) {
+		chrome.tabs.remove(openedTabs[url].id);
+		delete openedTabs[url];
+	});
 });
